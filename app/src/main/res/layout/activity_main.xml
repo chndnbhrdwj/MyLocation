@@ -1,39 +1,48 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+    tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/textViewLatitude"
-        android:text="Latitude: "
-        android:layout_margin="15dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:text="Latitude: " />
 
     <TextView
         android:id="@+id/textViewLatitudeVal"
-        android:layout_margin="15dp"
-        android:layout_toRightOf="@id/textViewLatitude"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:layout_toRightOf="@id/textViewLatitude" />
 
     <TextView
         android:id="@+id/textViewLongitude"
-        android:text="Longitude :"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/textViewLatitude"
         android:layout_margin="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:text="Longitude :" />
 
     <TextView
         android:id="@+id/textViewLongitudeVal"
-        android:layout_margin="5dp"
-        android:layout_below="@id/textViewLatitude"
-        android:layout_toRightOf="@id/textViewLongitude"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewLatitude"
+        android:layout_margin="5dp"
+        android:layout_toRightOf="@id/textViewLongitude" />
+
+    <TextView
+        android:id="@+id/textViewLastUpdated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewLongitude"
+        android:layout_margin="5dp" />
 
 
 </RelativeLayout>

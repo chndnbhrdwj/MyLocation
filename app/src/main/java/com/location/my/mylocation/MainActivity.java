@@ -1,37 +1,43 @@
 package com.location.my.mylocation;
 
 import android.location.Location;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.view.ActionMode;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-public class MainActivity extends AppCompatActivity implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+import java.text.DateFormat;
+import java.util.Date;
 
-    TextView lat, longitude;
+public class MainActivity extends AppCompatActivity implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+
+    TextView lat, longitude, lastUpdated;
 
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
+    private Location mCurrentLocation;
+    private LocationRequest mLocationRequest;
+    private boolean mRequestingLocationUpdates = true;
+    private String mLastUpdateTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        buildGoogleApiClient();
         lat= (TextView)findViewById(R.id.textViewLatitudeVal);
         longitude=(TextView)findViewById(R.id.textViewLongitudeVal);
+        lastUpdated = (TextView) findViewById(R.id.textViewLastUpdated);
+        buildGoogleApiClient();
     }
 
     @Override
-    protected  void  onStart(){
+    protected void onStart() {
         super.onStart();
         if(mGoogleApiClient!=null){
             mGoogleApiClient.connect();
@@ -40,25 +46,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -74,11 +66,12 @@ public class MainActivity extends AppCompatActivity implements
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
         if (mLastLocation != null) {
-            Log.d("LAT","inside location null");
             lat.setText(String.valueOf(mLastLocation.getLatitude()));
             longitude.setText(String.valueOf(mLastLocation.getLongitude()));
-        }else {
-            Log.d("LAT","location null");
+        }
+        if (mRequestingLocationUpdates) {
+            createLocationRequest();
+            startLocationUpdates();
         }
     }
 
@@ -90,5 +83,30 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    protected void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mCurrentLocation = location;
+        mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+        updateUI();
+    }
+
+    private void updateUI() {
+        lat.setText(String.valueOf(mCurrentLocation.getLatitude()));
+        longitude.setText(String.valueOf(mCurrentLocation.getLongitude()));
+        lastUpdated.setText(mLastUpdateTime);
     }
 }
